@@ -16,8 +16,8 @@
     <script>
         let currentLatitude, currentLongitude;
 
-        const targetLatitude = 48.29723; // Geodaten des Zielpunkts
-        const targetLongitude = 14.27332;
+        const targetLatitude = 52.8236; // Geodaten des Zielpunkts
+        const targetLongitude = 1.5431;
 
         function updatePosition(position) {
             currentLatitude = position.coords.latitude;
@@ -37,7 +37,7 @@
         function updateDirection(bearing) {
             window.addEventListener('deviceorientation', (event) => {
                 const alpha = event.alpha; // Richtung in Grad relativ zum Norden
-                const direction = (bearing - alpha + 360) % 360;
+                const direction = (bearing + alpha + 360) % 360; // Hier das Vorzeichen geändert
                 document.getElementById('direction').textContent = `Richtung: ${getArrow(direction)}`;
             });
         }
@@ -62,13 +62,13 @@
 
         function getArrow(bearing) {
             if (bearing >= 337.5 || bearing < 22.5) return '↑'; // Norden
-            if (bearing >= 22.5 && bearing < 67.5) return '↗'; // Nordost
-            if (bearing >= 67.5 && bearing < 112.5) return '→'; // Osten
-            if (bearing >= 112.5 && bearing < 157.5) return '↘'; // Südost
+            if (bearing >= 22.5 && bearing < 67.5) return '↖'; // Nordwest
+            if (bearing >= 67.5 && bearing < 112.5) return '←'; // Westen
+            if (bearing >= 112.5 && bearing < 157.5) return '↙'; // Südwest
             if (bearing >= 157.5 && bearing < 202.5) return '↓'; // Süden
-            if (bearing >= 202.5 && bearing < 247.5) return '↙'; // Südwest
-            if (bearing >= 247.5 && bearing < 292.5) return '←'; // Westen
-            if (bearing >= 292.5 && bearing < 337.5) return '↖'; // Nordwest
+            if (bearing >= 202.5 && bearing < 247.5) return '↘'; // Südost
+            if (bearing >= 247.5 && bearing < 292.5) return '→'; // Osten
+            if (bearing >= 292.5 && bearing < 337.5) return '↗'; // Nordost
         }
 
         if (navigator.geolocation) {
