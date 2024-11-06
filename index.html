@@ -14,12 +14,14 @@
     <p id="direction">Richtung: </p>
     <div id="star">★</div>
     <script>
-        const targetLatitude = 52.8236; // Geodaten des Zielpunkts
-        const targetLongitude = 1.5431;
+        let currentLatitude, currentLongitude;
 
-        function updateDirection(position) {
-            const currentLatitude = position.coords.latitude;
-            const currentLongitude = position.coords.longitude;
+        const targetLatitude = 48.29723; // Geodaten des Zielpunkts
+        const targetLongitude = 14.27332;
+
+        function updatePosition(position) {
+            currentLatitude = position.coords.latitude;
+            currentLongitude = position.coords.longitude;
             const distance = getDistanceFromLatLonInKm(currentLatitude, currentLongitude, targetLatitude, targetLongitude);
 
             if (distance < 0.01) { // Wenn innerhalb von 10 Metern
@@ -28,12 +30,16 @@
             } else {
                 document.getElementById('star').style.display = 'none';
                 const bearing = calculateBearing(currentLatitude, currentLongitude, targetLatitude, targetLongitude);
-                window.addEventListener('deviceorientation', (event) => {
-                    const alpha = event.alpha; // Richtung in Grad relativ zum Norden
-                    const direction = (bearing - alpha + 360) % 360;
-                    document.getElementById('direction').textContent = `Richtung: ${getArrow(direction)}`;
-                });
+                updateDirection(bearing);
             }
+        }
+
+        function updateDirection(bearing) {
+            window.addEventListener('deviceorientation', (event) => {
+                const alpha = event.alpha; // Richtung in Grad relativ zum Norden
+                const direction = (bearing - alpha + 360) % 360;
+                document.getElementById('direction').textContent = `Richtung: ${getArrow(direction)}`;
+            });
         }
 
         function calculateBearing(lat1, lon1, lat2, lon2) {
@@ -66,7 +72,7 @@
         }
 
         if (navigator.geolocation) {
-            navigator.geolocation.watchPosition(updateDirection, (err) => {
+            navigator.geolocation.watchPosition(updatePosition, (err) => {
                 console.warn(`ERROR(${err.code}): ${err.message}`);
             }, { enableHighAccuracy: true });
         } else {
