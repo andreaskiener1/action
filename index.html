@@ -5,24 +5,51 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Navigations-App</title>
     <style>
+        #map { height: 400px; width: 100%; }
         #direction { font-size: 48px; }
         #star { display: none; color: gold; font-size: 48px; }
     </style>
 </head>
 <body>
     <h1>Navigations-App</h1>
+    <div id="map"></div>
     <p id="direction">Richtung: </p>
     <div id="star">★</div>
     <script>
         let currentLatitude, currentLongitude;
+        let map, marker;
 
         const targetLatitude = 52.8236; // Geodaten des Zielpunkts
         const targetLongitude = 1.5431;
+
+        function initMap() {
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: { lat: targetLatitude, lng: targetLongitude },
+                zoom: 15
+            });
+
+            marker = new google.maps.Marker({
+                position: { lat: targetLatitude, lng: targetLongitude },
+                map: map,
+                title: 'Zielpunkt'
+            });
+
+            if (navigator.geolocation) {
+                navigator.geolocation.watchPosition(updatePosition, (err) => {
+                    console.warn(`ERROR(${err.code}): ${err.message}`);
+                }, { enableHighAccuracy: true });
+            } else {
+                alert('Geolocation is not supported by your browser');
+            }
+        }
 
         function updatePosition(position) {
             currentLatitude = position.coords.latitude;
             currentLongitude = position.coords.longitude;
             const distance = getDistanceFromLatLonInKm(currentLatitude, currentLongitude, targetLatitude, targetLongitude);
+
+            const currentPos = { lat: currentLatitude, lng: currentLongitude };
+            map.setCenter(currentPos);
 
             if (distance < 0.01) { // Wenn innerhalb von 10 Metern
                 document.getElementById('star').style.display = 'block';
@@ -71,13 +98,9 @@
             if (bearing >= 292.5 && bearing < 337.5) return '↗'; // Nordost
         }
 
-        if (navigator.geolocation) {
-            navigator.geolocation.watchPosition(updatePosition, (err) => {
-                console.warn(`ERROR(${err.code}): ${err.message}`);
-            }, { enableHighAccuracy: true });
-        } else {
-            alert('Geolocation is not supported by your browser');
-        }
+    </script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap">
     </script>
 </body>
 </html>
