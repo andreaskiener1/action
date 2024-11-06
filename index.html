@@ -14,22 +14,22 @@
     <p id="direction">Richtung: </p>
     <div id="star">★</div>
     <script>
-        const targetLatitude = 48.297585; // Geodaten des Zielpunkts
-        const targetLongitude = 14.275084;
+        const targetLatitude = 52.8236; // Geodaten des Zielpunkts
+        const targetLongitude = 1.5431;
 
         function updateDirection(position) {
             const currentLatitude = position.coords.latitude;
             const currentLongitude = position.coords.longitude;
             const distance = getDistanceFromLatLonInKm(currentLatitude, currentLongitude, targetLatitude, targetLongitude);
 
-            if (distance < 0.1) { // Wenn innerhalb von 100 Metern
+            if (distance < 0.01) { // Wenn innerhalb von 10 Metern
                 document.getElementById('star').style.display = 'block';
                 document.getElementById('direction').textContent = 'Sie haben das Ziel erreicht!';
             } else {
                 document.getElementById('star').style.display = 'none';
+                const bearing = calculateBearing(currentLatitude, currentLongitude, targetLatitude, targetLongitude);
                 window.addEventListener('deviceorientation', (event) => {
                     const alpha = event.alpha; // Richtung in Grad relativ zum Norden
-                    const bearing = calculateBearing(currentLatitude, currentLongitude, targetLatitude, targetLongitude);
                     const direction = (bearing - alpha + 360) % 360;
                     document.getElementById('direction').textContent = `Richtung: ${getArrow(direction)}`;
                 });
@@ -68,7 +68,7 @@
         if (navigator.geolocation) {
             navigator.geolocation.watchPosition(updateDirection, (err) => {
                 console.warn(`ERROR(${err.code}): ${err.message}`);
-            });
+            }, { enableHighAccuracy: true });
         } else {
             alert('Geolocation is not supported by your browser');
         }
