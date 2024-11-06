@@ -12,7 +12,9 @@
 </head>
 <body>
     <h1>Navigations-App</h1>
-    <div id="map"></div>
+    <gmp-map center="48.297142028808594,14.272665977478027" zoom="14" map-id="DEMO_MAP_ID">
+      <gmp-advanced-marker position="48.297142028808594,14.272665977478027" title="My location"></gmp-advanced-marker>
+    </gmp-map>
     <p id="direction">Richtung: </p>
     <div id="star">★</div>
     <script>
@@ -99,8 +101,10 @@
         }
 
     </script>
-    <script async defer
-    src=""https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY_HERE&callback=console.debug&libraries=maps,marker&v=beta"">
-    </script>
+
+
+    <script async src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY_HERE&callback=console.debug&libraries=maps,marker&v=beta">
+    </script>  
+    
 </body>
 </html>
